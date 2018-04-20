@@ -22,6 +22,7 @@ public class TimeUtils {
     }
 
 
+
     public static String formatDate(Date date) {
         return mDateFormat.format(date);
     }
