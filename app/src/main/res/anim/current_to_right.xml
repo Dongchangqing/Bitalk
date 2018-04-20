@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+           android:fromXDelta="0"
+           android:toXDelta="100%"
+           android:duration="250" >
+</translate>
+    <!-- 要使用%，这样才有效果，反则没有效果，500ms不起作用 -->

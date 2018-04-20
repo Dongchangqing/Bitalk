@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/rl_login"
+        android:fitsSystemWindows="true"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        >
+        <RelativeLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="#ffffff"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:text="登录"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center"
+                android:focusable="true"
+                android:layout_centerInParent="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:layout_gravity="center"
+                android:textColor="#333333"
+                android:textSize="20sp"
+                />
+
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#4655b5"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="确保对价值创造者的补偿"
+                android:textSize="24sp"
+                android:textColor="@color/color_ffffff"
+                android:gravity="center"
+                android:layout_marginTop="38dp"
+                />
+            <ImageView
+                android:layout_marginTop="19dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/bg_login"
+                />
+            <LinearLayout
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:layout_marginLeft="64dp"
+                android:layout_marginRight="64dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/btn_register"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="注册"
+                    android:textColor="@color/color_ffffff"
+                    android:background="@drawable/bg_register_btn"
+                    />
+
+                <Button
+                    android:id="@+id/btn_login"
+                    android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="登录"
+                    android:textColor="@color/color_ffffff"
+                    android:background="@drawable/bg_login_btn"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/ll_tablayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+            android:id="@+id/fl_layout"
+            android:layout_below="@+id/toolbar2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rect_downline_white"
+            >
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_notification"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabTextAppearance="@style/MyTabLayoutTextAppearance_two"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/color_ffffff"
+                app:tabIndicatorColor="@color/color_ffffff"
+                app:tabIndicatorHeight="0dp"
+                app:tabGravity="fill"
+                app:tabSelectedTextColor="@color/color_f15779"
+                app:tabTextColor="@color/color_666666"/>
+
+        </FrameLayout>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_notification"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+    </LinearLayout>
+
+</LinearLayout>

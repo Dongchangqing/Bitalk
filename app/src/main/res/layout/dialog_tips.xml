@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#70000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingTop="10dp"
+        android:layout_margin="36dp"
+        android:background="@drawable/shape_rect_ffffff_4corners"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_generaldialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textColor="#33435c"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_generaldialog_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textColor="#33435c"
+            android:textSize="16sp" />
+
+        <include layout="@layout/view_divider" />
+
+        <LinearLayout
+            android:id="@+id/layout_generaldialog_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_generaldialog_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_rect_ffffff_4leftcorners"
+                android:gravity="center"
+                android:textColor="#4a90f6"
+                android:textSize="15sp" />
+            <!--color_9ea3af-->
+
+            <include layout="@layout/view_divider_hor" />
+
+            <TextView
+                android:id="@+id/tv_generaldialog_confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_rect_ffffff_4rightcorners"
+                android:gravity="center"
+                android:textColor="#4a90f6"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
