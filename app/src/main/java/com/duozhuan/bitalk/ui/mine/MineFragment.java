@@ -44,7 +44,7 @@ public class MineFragment extends BaseFragment {
         switch (view.getId()) {
             case R.id.rl_mine_persondata:
                 if (SPUtils.isLogin()) {
-                    WebActivity.actionWeb(mContext, Constants.PERSONALEDIT + SPUtils.getString(Constants.LOGIN_USERNAME),"");
+                    WebActivity.actionWeb(mContext, Constants.PERSONALEDIT + SPUtils.getString(Constants.LOGIN_USERNAME),"我的个人资料");
                 }else {
                     LoginActivity.actionActivity(mContext);
                 }

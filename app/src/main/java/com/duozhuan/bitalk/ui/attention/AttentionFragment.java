@@ -81,8 +81,9 @@ public class AttentionFragment extends BaseFragment {
         DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
-            mWebContent.reload();
+            mWebContent.loadUrl(mUrl);
         });
+
         loadContent();
 
     }

@@ -127,6 +127,7 @@ public class JSInterface extends Object{
             MainActivity.notificationCount = event.getNotificationCount();
             MainActivity.replyCount = event.getReplyCount();
             MainActivity.dynamicCount = event.getDynamicCount();
+            //event.setNotificationCount(10);
             RxBus.get().post(Constants.EVENT_MESSAGE_COUNT, event);
         }
     }

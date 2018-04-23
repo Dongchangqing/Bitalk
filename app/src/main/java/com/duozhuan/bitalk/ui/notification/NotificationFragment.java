@@ -272,7 +272,58 @@ public class NotificationFragment extends BaseFragment  {
             @Tag(EVENT_MESSAGE_COUNT)
     })
     public void messageCount(MessageCountEvent messageCountEvent) {
+        if (MainActivity.notificationCount > 0){
+            TextView textView = ((TextView)mTabLayout.getTabAt(0).getCustomView().findViewById(R.id.tv_tab_message_count));
+            if (MainActivity.notificationCount > 99){
+                textView.setText("99+");
+                textView.setTextSize(8.0f);
+            }
+            else if (MainActivity.notificationCount > 10){
+                textView.setTextSize(8.0f);
+                textView.setText(MainActivity.notificationCount + "");
+            }
+            else {
+                textView.setText(MainActivity.notificationCount + "");
+                textView.setTextSize(10.0f);
+            }
+            textView.setVisibility(View.VISIBLE);
 
+        }
+
+        if (MainActivity.replyCount > 0){
+            TextView textView = ((TextView)mTabLayout.getTabAt(1).getCustomView().findViewById(R.id.tv_tab_message_count));
+
+            if (MainActivity.replyCount > 99){
+                textView.setText("99+");
+                textView.setTextSize(8.0f);
+            }
+            else if (MainActivity.replyCount > 10){
+                textView.setTextSize(8.0f);
+                textView.setText(MainActivity.replyCount + "");
+            }
+            else {
+                textView.setText(MainActivity.replyCount + "");
+                textView.setTextSize(10.0f);
+            }
+            textView.setVisibility(View.VISIBLE);
+        }
+        if (MainActivity.dynamicCount > 0){
+            TextView textView = ((TextView)mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.tv_tab_message_count));
+
+            if (MainActivity.dynamicCount > 99){
+                textView.setText("99+");
+                textView.setTextSize(8.0f);
+            }
+            else if (MainActivity.dynamicCount > 10){
+                textView.setTextSize(8.0f);
+                textView.setText(MainActivity.dynamicCount + "");
+            }
+            else {
+                textView.setText(MainActivity.dynamicCount + "");
+                textView.setTextSize(10.0f);
+            }
+            textView.setVisibility(View.VISIBLE);
+        }
     }
 
 }
