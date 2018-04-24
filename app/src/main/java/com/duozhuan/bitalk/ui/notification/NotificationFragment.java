@@ -2,6 +2,7 @@ package com.duozhuan.bitalk.ui.notification;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -69,6 +70,37 @@ public class NotificationFragment extends BaseFragment  {
     @Override
     protected void initEventAndData() {
         RxBus.get().register(this);
+        for (int i = 0; i < type.length; i++) {
+            NotificationListFragment fragment = new NotificationListFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.IT_NOTIFICATION_URL, typeUrl[i]);
+            //mTabLayout.addTab(mTabLayout.newTab().setText(typeStr[i]));
+            fragment.setArguments(bundle);
+            fragments.add(fragment);
+        }
+        mAdapter = new NotificationAdapter(getChildFragmentManager(), fragments);
+        //标题列表添加
+        mTitleList = new ArrayList<>();
+        for (int i=0;i<typeStr.length;i++){
+            mTitleList.add(typeStr[i]);
+        }
+        mAdapter.addTitles(mTitleList);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.setOffscreenPageLimit(2);
+
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        mTabLayout.getTabAt(0).setCustomView(R.layout.item_tabitem);
+        mNotifination=(TextView)mTabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_text);
+        mNotifination.setText(typeStr[0]);
+        mNotifination.setTextColor(Color.parseColor("#f15779"));
+        mTabLayout.getTabAt(1).setCustomView(R.layout.item_tabitem);
+        mReply=(TextView)mTabLayout.getTabAt(1).getCustomView().findViewById(R.id.tab_text);
+        mReply.setText(typeStr[1]);
+        mTabLayout.getTabAt(2).setCustomView(R.layout.item_tabitem);
+        mDynamic=(TextView)mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.tab_text);
+        mDynamic.setText(typeStr[2]);
         initView();
     }
 
@@ -87,39 +119,16 @@ public class NotificationFragment extends BaseFragment  {
 
     private void initView() {
         if (SPUtils.isLogin()){
+
             mRllogin.setVisibility(View.GONE);
-            mTablayout.setVisibility(View.VISIBLE);
-            for (int i = 0; i < type.length; i++) {
-                NotificationListFragment fragment = new NotificationListFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(Constants.IT_NOTIFICATION_URL, typeUrl[i]);
-                //mTabLayout.addTab(mTabLayout.newTab().setText(typeStr[i]));
-                fragment.setArguments(bundle);
-                fragments.add(fragment);
-            }
-            mAdapter = new NotificationAdapter(getChildFragmentManager(), fragments);
-            //标题列表添加
-            mTitleList = new ArrayList<>();
-            for (int i=0;i<typeStr.length;i++){
-                mTitleList.add(typeStr[i]);
-            }
-            mAdapter.addTitles(mTitleList);
-            mViewPager.setAdapter(mAdapter);
-            mViewPager.setOffscreenPageLimit(2);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mTablayout.setVisibility(View.VISIBLE);
+                }
+            },2000);
 
-            mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-            mTabLayout.setupWithViewPager(mViewPager);
 
-            mTabLayout.getTabAt(0).setCustomView(R.layout.item_tabitem);
-            mNotifination=(TextView)mTabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_text);
-            mNotifination.setText(typeStr[0]);
-            mNotifination.setTextColor(Color.parseColor("#f15779"));
-            mTabLayout.getTabAt(1).setCustomView(R.layout.item_tabitem);
-            mReply=(TextView)mTabLayout.getTabAt(1).getCustomView().findViewById(R.id.tab_text);
-            mReply.setText(typeStr[1]);
-            mTabLayout.getTabAt(2).setCustomView(R.layout.item_tabitem);
-            mDynamic=(TextView)mTabLayout.getTabAt(2).getCustomView().findViewById(R.id.tab_text);
-            mDynamic.setText(typeStr[2]);
             if (MainActivity.notificationCount > 0){
                 TextView textView = ((TextView)mTabLayout.getTabAt(0).getCustomView().findViewById(R.id.tv_tab_message_count));
                 if (MainActivity.notificationCount > 99){

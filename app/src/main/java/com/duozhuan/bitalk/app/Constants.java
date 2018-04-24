@@ -97,4 +97,7 @@ public class Constants {
 
     public static final String EVENT_WEBVIEW_NEW_PAGE="open_webview_new_page";
     public static final String EVENT_ATTENTION_RELODAD="attention_reload";
+    public static final String EVENT_SELECT_IMAGE5="select_image5";
+    public static final String EVENT_SELECT_IMAGE6="select_image6";
+
 }

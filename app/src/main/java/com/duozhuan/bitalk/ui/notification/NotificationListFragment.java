@@ -33,8 +33,6 @@ public class NotificationListFragment extends BaseFragment {
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout mRefreshLayout;
 
-    //@BindView(R.id.pb_web)
-    //ProgressBar mPbWeb;
 
     String mUrl = "";
 
@@ -70,22 +68,6 @@ public class NotificationListFragment extends BaseFragment {
         }
     }
 
-
-    // webview 加载进度
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
-            @Tag(EVENT_WEBVIEW_PROGRESS_REFRESH)
-    })
-    public void onProgressRefresh(Integer progress) {
-        if (getUserVisibleHint()) {
-//            if (progress < 100) {
-//                mPbWeb.setVisibility(View.INVISIBLE);
-//                mPbWeb.setProgress(progress);
-//            } else {
-//                mPbWeb.setVisibility(View.GONE);
-//            }
-        }
-    }
-
     // webview 开始加载
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
             @Tag(EVENT_WEBVIEW_PAGE_START)
@@ -108,7 +90,9 @@ public class NotificationListFragment extends BaseFragment {
             @Tag(EVENT_LOGIN_SUCCESS)
     })
     public void loginSuccess(String access_token) {
-        mWebContent.reload();
+        if (getUserVisibleHint()){
+            mWebContent.loadUrl(mUrl);
+        }
     }
 
 

@@ -1,22 +1,28 @@
 package com.duozhuan.bitalk.ui.mine;
 
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
+import com.duozhuan.bitalk.DataCleanManager;
 import com.duozhuan.bitalk.LoginActivity;
+import com.duozhuan.bitalk.MainActivity;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.CookieUtils;
+import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
 import com.duozhuan.bitalk.views.browser.WebActivity;
 import com.duozhuan.bitalk.widget.CommonDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -36,6 +42,7 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void initEventAndData() {
         RxBus.get().register(this);
+        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebView, true, false);
         initView();
     }
 
@@ -80,15 +87,20 @@ public class MineFragment extends BaseFragment {
             case R.id.rl_mine_logout:
                 CommonDialog dialog = new CommonDialog(mActivity);
                 dialog.setTitle("提示");
-                dialog.setMessage("确定要退出登录吗？");
+                dialog.setMessage("再次登录需要重新输入用户名、密码。\n" +
+                        "确定要退出登录吗？");
                 dialog.setListener(new CommonDialog.CommonDialogInterface() {
                     @Override
                     public void onOK() {
                         mWebView.loadUrl(Constants.LOGINOUTURL);
                         CookieUtils.clearCookie();
                         SPUtils.setString(Constants.LOGIN_ACCENTTOKEN,"");
+                        CookieUtils.setCookie("");
+                        CookieUtils.setCookies("");
                         RxBus.get().post(Constants.EVENT_LOGOUT_SUCCESS,"");
                         initView();
+                        clearWebViewCache();
+                        DataCleanManager.DeleteFile(new File("data/data/com.duozhuan.bitalk"));
                     }
 
                     @Override
@@ -125,5 +137,52 @@ public class MineFragment extends BaseFragment {
     public void loginSuccess(String access_token) {
         initView();
     }
+    /**
+     * 清除WebView缓存
+     */
+    public void clearWebViewCache(){
 
+        //清理Webview缓存数据库
+        try {
+            mContext.deleteDatabase("webview.db");
+            mContext.deleteDatabase("webviewCache.db");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //WebView 缓存文件
+        File appCacheDir = new File(mContext.getFilesDir().getAbsolutePath()+"/webviewcache");
+
+        File webviewCacheDir = new File(mContext.getCacheDir().getAbsolutePath()+"/webviewCache");
+
+        //删除webview 缓存目录
+        if(webviewCacheDir.exists()){
+            deleteFile(webviewCacheDir);
+        }
+        //删除webview 缓存 缓存目录
+        if(appCacheDir.exists()){
+            deleteFile(appCacheDir);
+        }
+    }
+
+    /**
+     * 递归删除 文件/文件夹
+     *
+     * @param file
+     */
+    public void deleteFile(File file) {
+
+
+        if (file.exists()) {
+            if (file.isFile()) {
+                file.delete();
+            } else if (file.isDirectory()) {
+                File files[] = file.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    deleteFile(files[i]);
+                }
+            }
+            file.delete();
+        }
+    }
 }

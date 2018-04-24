@@ -47,22 +47,22 @@
     </RelativeLayout>
 
 
-    <ProgressBar
-        android:id="@+id/pb_web"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_below="@id/toolbar"
-        android:background="@null"
-        android:indeterminateOnly="false"
-        android:max="100"
-        android:progressDrawable="@drawable/layer_web_progress"/>
+    <!--<ProgressBar-->
+        <!--android:id="@+id/pb_web"-->
+        <!--style="?android:attr/progressBarStyleHorizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="3dp"-->
+        <!--android:layout_below="@id/toolbar"-->
+        <!--android:background="@null"-->
+        <!--android:indeterminateOnly="false"-->
+        <!--android:max="100"-->
+        <!--android:progressDrawable="@drawable/layer_web_progress"/>-->
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/pb_web"
+        android:layout_below="@id/toolbar"
         android:background="@null"
         app:srlEnableScrollContentWhenLoaded="true">
 
@@ -78,7 +78,7 @@
         android:id="@+id/ll_error_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/pb_web"
+        android:layout_below="@id/toolbar"
         android:background="@android:color/white"
         android:orientation="vertical"
         android:visibility="gone">

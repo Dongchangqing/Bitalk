@@ -39,6 +39,7 @@ import butterknife.OnClick;
 import static com.duozhuan.bitalk.app.Constants.EVENT_DISCOVER_LABEL;
 import static com.duozhuan.bitalk.app.Constants.EVENT_HIDDEN_BOTTOM;
 import static com.duozhuan.bitalk.app.Constants.EVENT_HIDDEN_BOTTOM_AND_TOP;
+import static com.duozhuan.bitalk.app.Constants.EVENT_LOGOUT_SUCCESS;
 import static com.duozhuan.bitalk.app.Constants.EVENT_MESSAGE_COUNT;
 import static com.duozhuan.bitalk.app.Constants.EVENT_SAVE_USERINFO;
 import static com.duozhuan.bitalk.app.Constants.EVENT_SHOW_BOTTOM;

@@ -2,19 +2,24 @@ package com.duozhuan.bitalk.views.browser;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.duozhuan.bitalk.DataCleanManager;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseActivity;
+import com.duozhuan.bitalk.event.SelectImg6Event;
+import com.duozhuan.bitalk.event.SelectImgEvent;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -22,9 +27,13 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.duozhuan.bitalk.app.Constants.EVENT_SELECT_IMAGE5;
+import static com.duozhuan.bitalk.app.Constants.EVENT_SELECT_IMAGE6;
 import static com.duozhuan.bitalk.app.Constants.EVENT_SET_WEB_TITLE;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_ERROR;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_FINISH;
@@ -44,8 +53,6 @@ public class WebActivity extends BaseActivity {
     @BindView(R.id.tv_title)
     TextView mTvTitle;
 
-    @BindView(R.id.pb_web)
-    ProgressBar mPbWeb;
 
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout mRefreshLayout;
@@ -56,6 +63,12 @@ public class WebActivity extends BaseActivity {
 
     private String mUrl;
     private String mTitle="";
+
+    public ValueCallback<Uri> mUploadMessage;
+    public ValueCallback<Uri[]> mUploadMessageForAndroid5;
+
+    public final static int FILECHOOSER_RESULTCODE = 1;
+    public final static int FILECHOOSER_RESULTCODE_FOR_ANDROID_5 = 2;
 
 
     @Override
@@ -124,18 +137,6 @@ public class WebActivity extends BaseActivity {
     }
 
 
-    // webview 加载进度
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
-            @Tag(EVENT_WEBVIEW_PROGRESS_REFRESH)
-    })
-    public void onProgressRefresh(Integer progress) {
-        if (progress < 100) {
-            mPbWeb.setVisibility(View.GONE);
-            mPbWeb.setProgress(progress);
-        } else {
-            mPbWeb.setVisibility(View.GONE);
-        }
-    }
 
     // webview 开始加载
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
@@ -198,6 +199,12 @@ public class WebActivity extends BaseActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         RxBus.get().unregister(this);
@@ -228,5 +235,57 @@ public class WebActivity extends BaseActivity {
         CookieUtils.setCookie(access_token);
         finish();
         overridePendingTransition(0,R.anim.current_to_right);
+    }
+
+
+    // webview 开始加载
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_SELECT_IMAGE5)
+    })
+    public void openFileChooserImpl(SelectImgEvent event) {
+        mUploadMessage = event.getUploadMsg();
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("image/*");
+        startActivityForResult(Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
+    }
+
+    // webview 开始加载
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_SELECT_IMAGE6)
+    })
+    public void openFileChooserImplForAndroid5(SelectImg6Event event) {
+        mUploadMessageForAndroid5 = event.getUploadMsg();
+        Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        contentSelectionIntent.setType("image/*");
+
+        Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+
+        startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE_FOR_ANDROID_5);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,Intent intent) {
+        if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (null == mUploadMessage)
+                return;
+            Uri result = intent == null || resultCode != RESULT_OK ? null: intent.getData();
+            mUploadMessage.onReceiveValue(result);
+            mUploadMessage = null;
+
+        } else if (requestCode == FILECHOOSER_RESULTCODE_FOR_ANDROID_5){
+            if (null == mUploadMessageForAndroid5)
+                return;
+            Uri result = (intent == null || resultCode != RESULT_OK) ? null: intent.getData();
+            if (result != null) {
+                mUploadMessageForAndroid5.onReceiveValue(new Uri[]{result});
+            } else {
+                mUploadMessageForAndroid5.onReceiveValue(new Uri[]{});
+            }
+            mUploadMessageForAndroid5 = null;
+        }
     }
 }

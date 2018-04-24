@@ -45,7 +45,7 @@ public class DefaultWebViewClient extends WebViewClient {
 
         @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        Log.i("dcqing",url);
+        Log.i("dddd-url",url);
         if (url.contains("access_token")){
             RxBus.get().post(Constants.EVENT_WEBVIEW_PAGE_LOADRESOURCE, url);
         }
@@ -68,6 +68,8 @@ public class DefaultWebViewClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
+        //不要删除
+        Log.i("dddd",CookieUtils.getCookie(url)+"");
         RxBus.get().post(Constants.EVENT_WEBVIEW_PAGE_START, url);
     }
 
@@ -76,17 +78,6 @@ public class DefaultWebViewClient extends WebViewClient {
         super.onPageFinished(view, url);
         loadJS(view);
         RxBus.get().post(Constants.EVENT_WEBVIEW_PAGE_FINISH, url);
-    }
-
-    // 将要加载资源(url)
-    @Override
-    public void onLoadResource(WebView view, String url) {
-        super.onLoadResource(view, url);
-//        deelUrlOverride(view,url);
-//        Matcher matcher = WEB_URL.matcher(url);
-//        if (!matcher.find()){
-//            RxBus.get().post(Constants.EVENT_WEBVIEW_PAGE_LOADRESOURCE, url);
-//        }
     }
 
     // 此方法添加于API23

@@ -245,7 +245,7 @@ public class AttentionFragment extends BaseFragment {
             @Tag(EVENT_LOGOUT_SUCCESS)
     })
     public void logoutSuccess(String access_token) {
-        mWebContent.loadUrl(mUrl);
+        mWebContent.reload();
     }
     public void backPreviousPage(){
         new Handler().postDelayed(new Runnable() {
