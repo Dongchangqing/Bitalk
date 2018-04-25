@@ -2,30 +2,44 @@ package com.duozhuan.bitalk.ui.mine;
 
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
 import com.duozhuan.bitalk.DataCleanManager;
 import com.duozhuan.bitalk.LoginActivity;
-import com.duozhuan.bitalk.MainActivity;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
+import com.duozhuan.bitalk.data.network.ApiService;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.CookieUtils;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
 import com.duozhuan.bitalk.views.browser.WebActivity;
 import com.duozhuan.bitalk.widget.CommonDialog;
+import com.google.gson.JsonObject;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGIN_SUCCESS;
 
@@ -42,7 +56,7 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void initEventAndData() {
         RxBus.get().register(this);
-        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebView, true, false);
+        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebView, true, false,false);
         initView();
     }
 
@@ -92,7 +106,9 @@ public class MineFragment extends BaseFragment {
                 dialog.setListener(new CommonDialog.CommonDialogInterface() {
                     @Override
                     public void onOK() {
+
                         mWebView.loadUrl(Constants.LOGINOUTURL);
+
                         CookieUtils.clearCookie();
                         SPUtils.setString(Constants.LOGIN_ACCENTTOKEN,"");
                         CookieUtils.setCookie("");
@@ -112,6 +128,70 @@ public class MineFragment extends BaseFragment {
                 break;
         }
     }
+    public void post1(){
+            ApiService.getInstance().getApi().revoke()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<JsonObject>() {
+                @Override
+                public void accept(JsonObject jsonObject) throws Exception {
+                    Log.i("dddd", jsonObject.toString());
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+                    Log.i("dddd",throwable.toString());
+                }
+            });
+    }
+    public void post() {
+        //创建网络处理的对象
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+
+        //post请求来获得数据
+        //创建一个RequestBody，存放重要数据的键值对
+        RequestBody body = new FormBody.Builder()
+                //.add("showapi_appid", "13074")
+                //.add("showapi_sign", "ea5b4bf2e140498bb772d1bf2a51a7a0")
+                .build();
+        //创建一个请求对象，传入URL地址和相关数据的键值对的对象
+        Log.i("dddd-1",SPUtils.getString(Constants.LOGIN_ACCENTTOKEN));
+        Request request = new Request.Builder()
+                .addHeader(":authority","steemconnect.com")
+                .addHeader(":method","POST")
+                .addHeader(":path","/api/oauth2/token/revoke")
+                .addHeader(":scheme","https")
+                .addHeader("accept","application/json, text/plain, */*")
+                .addHeader("accept-encoding","gzip, deflate, br")
+                .addHeader("accept-language","zh-CN,zh;q=0.9")
+                .addHeader("authorization",SPUtils.getString(Constants.LOGIN_ACCENTTOKEN))
+                .addHeader("content-length","223")
+                .addHeader("content-type","application/json")
+                .addHeader("origin","https://steem.duozhuan.cn")
+                .addHeader("referer","https://steem.duozhuan.cn/@"+SPUtils.getString(Constants.LOGIN_USERNAME))
+                .addHeader("user-agent","Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Mobile Safari/537.36")
+                .url("https://steemconnect.com/api/oauth2/token/revoke")
+                .post(body).build();
+
+        //创建一个能处理请求数据的操作类
+        Call call = client.newCall(request);
+
+        //使用异步任务的模式请求数据
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i("dddd",e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.i("dddds",response.body().string());
+            }
+        });
+    }
+
     public void initView(){
         if (!TextUtils.isEmpty(SPUtils.getString(Constants.LOGIN_ACCENTTOKEN))){
             mLogout.setVisibility(View.VISIBLE);

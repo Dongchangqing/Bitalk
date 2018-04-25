@@ -49,8 +49,9 @@ public class CookieUtils {
         if (cookie!=null&&cookie.contains("__cfduid")){
             setCookies("");
             setCookie("");
+            return "";
         }
-        return cookie;
+        return  cookie;
     }
 
 }

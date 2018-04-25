@@ -118,6 +118,7 @@ public class DefaultRefreshHeader extends FrameLayout implements RefreshHeader {
     public int onFinish(RefreshLayout layout, boolean success) {
         if (success) {
             mTvRefresh.setText("刷新完成");
+            mLastTime=new Date();
         } else {
             mTvRefresh.setText("刷新失败");
         }

@@ -47,7 +47,7 @@ public class DiscoverListFragment extends BaseFragment {
 
         RxBus.get().register(this);
         mUrl = getArguments().getString(Constants.IT_DISCOVER_URL,"");
-        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false);
+        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false,false);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             mWebContent.reload();
@@ -65,6 +65,7 @@ public class DiscoverListFragment extends BaseFragment {
         RxBus.get().unregister(this);
         if (mWebContent != null) {
             mWebContent.clearHistory();
+            mWebContent.clearFormData();
             mWebContent.destroy();
         }
     }

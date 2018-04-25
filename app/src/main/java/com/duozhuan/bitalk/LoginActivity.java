@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseActivity;
+import com.duozhuan.bitalk.views.browser.CookieUtils;
 import com.duozhuan.bitalk.views.browser.WebActivity;
 
 import java.io.File;
@@ -38,6 +39,7 @@ public class LoginActivity extends BaseActivity {
                 break;
             case R.id.btn_login:
                 clearWebViewCache();
+                //DataCleanManager.DeleteFile(new File("data/data/com.duozhuan.bitalk"));
                 WebActivity.actionWeb(this,Constants.LOGINURL,"登录");
                 finish();
                 break;
@@ -57,6 +59,7 @@ public class LoginActivity extends BaseActivity {
     public static void actionActivity(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
+        CookieUtils.clearCookie();
     }
     /**
      * 清除WebView缓存

@@ -17,11 +17,11 @@ public class DefaultWebViewSetting {
 
 
     public static void init(AppCompatActivity context, WebView webView,boolean isContent) {
-        init(context,webView,false,isContent);
+        init(context,webView,false,isContent,false);
     }
 
 
-    public static void init(AppCompatActivity context, WebView webView, boolean isViewProt, boolean isContent) {
+    public static void init(AppCompatActivity context, WebView webView, boolean isViewProt, boolean isContent,boolean isChrome) {
         WebSettings settings = webView.getSettings();
 //        // 存储(storage)
 //        // 启用HTML5 DOM storage API，默认值 false
@@ -49,7 +49,12 @@ public class DefaultWebViewSetting {
         }else {
             webView.setWebViewClient(new DefaultWebViewClient(context));
         }
-        webView.setWebChromeClient(new DefaultChromeClient());
+        if (isChrome) {
+            webView.setWebChromeClient(new ContentChromeClient());
+        }else{
+            webView.setWebChromeClient(new DefaultChromeClient());
+
+        }
     }
 
 

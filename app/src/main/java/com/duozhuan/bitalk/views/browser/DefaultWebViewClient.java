@@ -69,14 +69,16 @@ public class DefaultWebViewClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
         //不要删除
-        Log.i("dddd",CookieUtils.getCookie(url)+"");
+        Log.i("dddd-start",CookieUtils.getCookie(url)+"");
         RxBus.get().post(Constants.EVENT_WEBVIEW_PAGE_START, url);
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        loadJS(view);
+        //不要删除
+        Log.i("dddd-finish",CookieUtils.getCookie(url)+"");
+        //loadJS(view);
         RxBus.get().post(Constants.EVENT_WEBVIEW_PAGE_FINISH, url);
     }
 

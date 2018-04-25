@@ -1,11 +1,14 @@
 package com.duozhuan.bitalk.ui.attention;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,6 +20,8 @@ import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
 import com.duozhuan.bitalk.event.JumpUrlEvent;
+import com.duozhuan.bitalk.event.SelectImg6Event;
+import com.duozhuan.bitalk.event.SelectImgEvent;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.CookieUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
@@ -31,12 +36,15 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static android.app.Activity.RESULT_OK;
 import static com.duozhuan.bitalk.app.Constants.EVENT_ATTENTION_RELODAD;
 import static com.duozhuan.bitalk.app.Constants.EVENT_HIDDEN_BOTTOM_AND_TOP;
 import static com.duozhuan.bitalk.app.Constants.EVENT_HIDDEN_TOP;
 import static com.duozhuan.bitalk.app.Constants.EVENT_INVITATION_DETAIL;
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGIN_SUCCESS;
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGOUT_SUCCESS;
+import static com.duozhuan.bitalk.app.Constants.EVENT_SELECT_IMAGE5;
+import static com.duozhuan.bitalk.app.Constants.EVENT_SELECT_IMAGE6;
 import static com.duozhuan.bitalk.app.Constants.EVENT_SHOW_BOTTOM_AND_TOP;
 import static com.duozhuan.bitalk.app.Constants.EVENT_SHOW_TOP;
 import static com.duozhuan.bitalk.app.Constants.EVENT_USER_INTRODUCTION;
@@ -69,6 +77,12 @@ public class AttentionFragment extends BaseFragment {
 
     private String mUrl = Constants.Host;
 
+    public ValueCallback<Uri> mUploadMessage;
+    public ValueCallback<Uri[]> mUploadMessageForAndroid5;
+
+    public final static int FILECHOOSER_RESULTCODE = 1;
+    public final static int FILECHOOSER_RESULTCODE_FOR_ANDROID_5 = 2;
+
     @Override
     protected int getLayout() {
         return R.layout.fragment_attention;
@@ -78,7 +92,7 @@ public class AttentionFragment extends BaseFragment {
     protected void initEventAndData() {
 
         RxBus.get().register(this);
-        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false);
+        DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false,false);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             mWebContent.loadUrl(mUrl);
@@ -124,6 +138,7 @@ public class AttentionFragment extends BaseFragment {
         RxBus.get().unregister(this);
         if (mWebContent != null) {
             mWebContent.clearHistory();
+            mWebContent.clearFormData();
             mWebContent.destroy();
         }
     }
@@ -298,5 +313,57 @@ public class AttentionFragment extends BaseFragment {
             RxBus.get().post(Constants.EVENT_LOGIN_SUCCESS, access_token);
         }
         CookieUtils.setCookie(access_token);
+    }
+
+    // webview 开始加载
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_SELECT_IMAGE5)
+    })
+    public void openFileChooserImpl(SelectImgEvent event) {
+        mUploadMessage = event.getUploadMsg();
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("image/*");
+        startActivityForResult(Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
+    }
+
+    // webview 开始加载
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_SELECT_IMAGE6)
+    })
+    public void openFileChooserImplForAndroid5(SelectImg6Event event) {
+        mUploadMessageForAndroid5 = event.getUploadMsg();
+        Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        contentSelectionIntent.setType("image/*");
+
+        Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+
+        startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE_FOR_ANDROID_5);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,Intent intent) {
+        if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (null == mUploadMessage)
+                return;
+            Uri result = intent == null || resultCode != RESULT_OK ? null: intent.getData();
+            mUploadMessage.onReceiveValue(result);
+            mUploadMessage = null;
+
+        } else if (requestCode == FILECHOOSER_RESULTCODE_FOR_ANDROID_5){
+            if (null == mUploadMessageForAndroid5)
+                return;
+            Uri result = (intent == null || resultCode != RESULT_OK) ? null: intent.getData();
+            if (result != null) {
+                mUploadMessageForAndroid5.onReceiveValue(new Uri[]{result});
+            } else {
+                mUploadMessageForAndroid5.onReceiveValue(new Uri[]{});
+            }
+            mUploadMessageForAndroid5 = null;
+        }
     }
 }
