@@ -14,11 +14,11 @@ public class CookieUtils {
     public static void setCookie(String cookie) {
         // 设置 cookie 必须设置 domain 和 path ，只有当前网页的 domain 和 path 匹配时，才会携带 cookie
         CookieSyncManager.createInstance(MyApplication.getContext());
-        cookie = cookie + ";path=/;domain=" + ".duozhuan.cn";
+        cookie = cookie + ";path=/;domain=" + ".bitalk.cc";
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
         cookieManager.removeAllCookie();
-        cookieManager.setCookie("http://steem.duozhuan.cn", cookie);
+        cookieManager.setCookie("https://www.bitalk.cc", cookie);
         CookieSyncManager.getInstance().sync();
     }
 

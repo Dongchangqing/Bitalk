@@ -312,7 +312,8 @@ public class AttentionFragment extends BaseFragment {
         if (!TextUtils.isEmpty(access_token)) {
             RxBus.get().post(Constants.EVENT_LOGIN_SUCCESS, access_token);
         }
-        CookieUtils.setCookie(access_token);
+        //解决登录退不出去问题
+        //CookieUtils.setCookie(access_token);
     }
 
     // webview 开始加载

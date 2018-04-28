@@ -3,36 +3,36 @@ package com.duozhuan.bitalk.app;
 
 public class Constants {
     //首页
+    public static String Host="https://www.bitalk.cc/";
     //public static String Host="https://www.bitalk.cc/";
-    public static String Host="https://steem.duozhuan.cn/";
     //public static String Host="http://192.168.0.101:3000/";
 
     //发帖
-    public static String SEND="https://steem.duozhuan.cn/editor";
+    public static String SEND="https://www.bitalk.cc/editor";
 
     //发现页面
-    public static String READ="https://steem.duozhuan.cn/trending/cn-reader";
-    public static String ASK="https://steem.duozhuan.cn/trending/cn-ask";
-    public static String FOOD="https://steem.duozhuan.cn/trending/food";
-    public static String TRAVEL="https://steem.duozhuan.cn/trending/travel";
-    public static String MONEY="https://steem.duozhuan.cn/trending/cn-money";
-    public static String ALL="https://steem.duozhuan.cn/trending";
+    public static String READ="https://www.bitalk.cc/trending/cn-reader";
+    public static String ASK="https://www.bitalk.cc/trending/cn-ask";
+    public static String FOOD="https://www.bitalk.cc/trending/food";
+    public static String TRAVEL="https://www.bitalk.cc/trending/travel";
+    public static String MONEY="https://www.bitalk.cc/trending/cn-money";
+    public static String ALL="https://www.bitalk.cc/trending";
 
     //通知页面
-    public static String NOTIFICATION="https://steem.duozhuan.cn/notifications";
-    public static String REPLY="https://steem.duozhuan.cn/replies";
-    public static String DYNAMIC="https://steem.duozhuan.cn/activity";
+    public static String NOTIFICATION="https://www.bitalk.cc/notifications";
+    public static String REPLY="https://www.bitalk.cc/replies";
+    public static String DYNAMIC="https://www.bitalk.cc/activity";
 
     //我的
     public static String PERSONALEDIT=Constants.Host+"@";
-    public static String DRAFTS="https://steem.duozhuan.cn/drafts";
-    public static String BOOKMARKS="https://steem.duozhuan.cn/bookmarks";
-    public static String WALLET="https://steem.duozhuan.cn/wallet";
-    public static String SETTING="https://steem.duozhuan.cn/settings";
+    public static String DRAFTS="https://www.bitalk.cc/drafts";
+    public static String BOOKMARKS="https://www.bitalk.cc/bookmarks";
+    public static String WALLET="https://www.bitalk.cc/wallet";
+    public static String SETTING="https://www.bitalk.cc/settings";
 
     //登录相关
     public static String REMOVETOKEN="https://steemconnect.com/api/";
-    public static String LOGINURL="https://steemconnect.com/oauth2/authorize?client_id=duozhuan&redirect_uri=https%3A%2F%2Fsteem.duozhuan.cn%2Fcallback%2F&scope=";
+    public static String LOGINURL="https://steemconnect.com/oauth2/authorize?client_id=duozhuan&redirect_uri=https%3A%2F%2Fwww.bitalk.cc%2Fcallback%2F&scope=";
 
     //注册
     public static String REGISTERURL="https://signup.steemit.com/?ref=duozhuan";
