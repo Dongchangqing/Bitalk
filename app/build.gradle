@@ -94,4 +94,6 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4'
     //rxbus
     implementation 'com.hwangjr.rxbus:rxbus:2.0.0'
+    //圆形图片
+    implementation 'com.github.thinkcool:circletextimageview:1.0.20151218'
 }

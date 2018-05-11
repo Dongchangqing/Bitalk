@@ -10,6 +10,7 @@ import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
+import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -37,6 +38,9 @@ public class DiscoverListFragment extends BaseFragment {
     //ProgressBar mPbWeb;
 
     String mUrl="";
+
+    //加载对话框loading
+    private LoadingDialog loadingDialog;
     @Override
     protected int getLayout() {
         return R.layout.fragment_discoverlist;
@@ -51,8 +55,12 @@ public class DiscoverListFragment extends BaseFragment {
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             mWebContent.reload();
+            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+            loadingDialog.show();
         });
         mWebContent.loadUrl(mUrl);
+        loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+        loadingDialog.show();
     }
 
     private void showLoadStart() {
@@ -99,6 +107,9 @@ public class DiscoverListFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_FINISH)
     })
     public void onPageFinish(String s) {
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
         mRefreshLayout.finishRefresh();
     }
 

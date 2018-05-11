@@ -34,9 +34,11 @@ public class DefaultWebViewSetting {
 //        // 是否使用overview mode加载页面，默认值 false
 //        // 当页面宽度大于WebView宽度时，缩小使页面宽度等于WebView宽度
         settings.setLoadWithOverviewMode(true);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+//      设置缓存模式
+
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 //
-//        // 是否支持Javascript，默认值false
+//      是否支持Javascript，默认值false
         settings.setJavaScriptEnabled(true);
 //
         settings.setLoadsImagesAutomatically(true); // 是否自动加载图片

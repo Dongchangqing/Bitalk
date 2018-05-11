@@ -8,8 +8,10 @@ import android.widget.ProgressBar;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
+import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
+import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -35,6 +37,8 @@ public class NotificationListFragment extends BaseFragment {
 
 
     String mUrl = "";
+    //加载对话框loading
+    private LoadingDialog loadingDialog;
 
     @Override
     protected int getLayout() {
@@ -50,8 +54,15 @@ public class NotificationListFragment extends BaseFragment {
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             mWebContent.reload();
+            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+            loadingDialog.show();
         });
         mWebContent.loadUrl(mUrl);
+        if (SPUtils.isLogin()) {
+            loadingDialog = new LoadingDialog(mContext, "玩命加载中");
+            loadingDialog.show();
+        }
+
     }
 
     private void showLoadStart() {
@@ -83,6 +94,9 @@ public class NotificationListFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_FINISH)
     })
     public void onPageFinish(String s) {
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
         mRefreshLayout.finishRefresh();
     }
 
@@ -91,9 +105,9 @@ public class NotificationListFragment extends BaseFragment {
             @Tag(EVENT_LOGIN_SUCCESS)
     })
     public void loginSuccess(String access_token) {
-        if (getUserVisibleHint()){
+        //if (getUserVisibleHint()){
             mWebContent.loadUrl(mUrl);
-        }
+        //}
     }
 
 

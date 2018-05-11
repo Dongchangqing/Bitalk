@@ -27,6 +27,7 @@ import com.duozhuan.bitalk.views.browser.CookieUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
 import com.duozhuan.bitalk.views.browser.WebActivity;
+import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -83,6 +84,9 @@ public class AttentionFragment extends BaseFragment {
     public final static int FILECHOOSER_RESULTCODE = 1;
     public final static int FILECHOOSER_RESULTCODE_FOR_ANDROID_5 = 2;
 
+    //加载对话框loading
+    private LoadingDialog loadingDialog;
+
     @Override
     protected int getLayout() {
         return R.layout.fragment_attention;
@@ -96,6 +100,10 @@ public class AttentionFragment extends BaseFragment {
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             mWebContent.loadUrl(mUrl);
+
+            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+            loadingDialog.show();
+
         });
 
         loadContent();
@@ -104,6 +112,8 @@ public class AttentionFragment extends BaseFragment {
 
     private void loadContent() {
         mWebContent.loadUrl(mUrl);
+        loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+        loadingDialog.show();
     }
 
     @OnClick({R.id.ll_error_page, R.id.tv_send})
@@ -163,6 +173,9 @@ public class AttentionFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_FINISH)
     })
     public void onPageFinish(String url) {
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
         CookieManager cookieManager = CookieManager.getInstance();
         String cookieStr = cookieManager.getCookie(url);
         Log.i("cookie",cookieStr+"");

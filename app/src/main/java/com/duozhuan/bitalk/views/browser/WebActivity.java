@@ -17,6 +17,7 @@ import com.duozhuan.bitalk.base.base.BaseActivity;
 import com.duozhuan.bitalk.event.SelectImg6Event;
 import com.duozhuan.bitalk.event.SelectImgEvent;
 import com.duozhuan.bitalk.util.SPUtils;
+import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
@@ -62,6 +63,8 @@ public class WebActivity extends BaseActivity {
 
     public final static int CHOOSER_RESULTCODE = 3;
     public final static int CHOOSER_RESULTCODE_FOR_ANDROID = 4;
+    //加载对话框loading
+    private LoadingDialog loadingDialog;
 
 
     @Override
@@ -86,9 +89,13 @@ public class WebActivity extends BaseActivity {
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(this));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             mWebContent.reload();
+            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+            loadingDialog.show();
         });
 
         loadContent();
+        loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+        loadingDialog.show();
     }
 
     public static void actionWeb(Context context, String url,String title) {
@@ -145,6 +152,9 @@ public class WebActivity extends BaseActivity {
             @Tag(EVENT_WEBVIEW_PAGE_FINISH)
     })
     public void onPageFinish(String s) {
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
         mRefreshLayout.finishRefresh();
     }
 
