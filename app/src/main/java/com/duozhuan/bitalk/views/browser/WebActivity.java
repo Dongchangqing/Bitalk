@@ -163,7 +163,10 @@ public class WebActivity extends BaseActivity {
             @Tag(EVENT_WEBVIEW_PAGE_ERROR)
     })
     public void onPageFail(String s) {
-        //showLoadFail();
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
+        showLoadFail();
     }
 
     // webview url 拦截

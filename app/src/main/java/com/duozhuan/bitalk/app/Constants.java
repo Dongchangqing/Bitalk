@@ -36,6 +36,7 @@ public class Constants {
 
     //注册
     public static String REGISTERURL="https://signup.steemit.com/?ref=duozhuan";
+
     //版本号
     public static final String APP_VERSION = "1.0.0";
     public static String LOGINOUTURL="https://steemconnect.com/api/oauth2/token/revoke";
@@ -66,37 +67,42 @@ public class Constants {
     public static final String IT_NOTIFICATION_URL = "notification_url";
 
 
-    //关注页面点击跳转
-    public static final String EVENT_USER_INTRODUCTION="open_user_introduction";
-    public static final String EVENT_INVITATION_DETAIL="open_invitation_detail";
-    public static final String EVENT_DISCOVER_LABEL="open_discover_label";
+
 
     //登录-退出
     public static final String EVENT_LOGIN_SUCCESS="login_success";
     public static final String EVENT_LOGOUT_SUCCESS="logout_success";
 
-    //备用
-    //显示和隐藏底部tab
+    //===以下未用===
+
+    //关注页面点击跳转(未用)
+    public static final String EVENT_USER_INTRODUCTION="open_user_introduction";
+    public static final String EVENT_INVITATION_DETAIL="open_invitation_detail";
+    public static final String EVENT_DISCOVER_LABEL="open_discover_label";
+
+    //显示和隐藏底部tab(未用)
     public static final String EVENT_SHOW_BOTTOM="show_bottom";
     public static final String EVENT_HIDDEN_BOTTOM="hidden_bottom";
-    //显示和隐藏底部tab和顶部导航
+    //显示和隐藏底部tab和顶部导航(未用)
     public static final String EVENT_SHOW_BOTTOM_AND_TOP="show_bottom_and_top";
     public static final String EVENT_HIDDEN_BOTTOM_AND_TOP="hidden_bottom_and_top";
-    //显示和隐藏顶部导航
+    //显示和隐藏顶部导航(未用)
     public static final String EVENT_SHOW_TOP="show_top";
     public static final String EVENT_HIDDEN_TOP="hidden_top";
-    //保存用户信息
+    //保存用户信息(未用)
     public static final String EVENT_SAVE_USERINFO="save_userinfo";
-    //用户退出
+    //用户退出(未用)
     public static final String EVENT_USER_EXIT="user_exit";
-    //用户登录
+    //用户登录(未用)
     public static final String EVENT_USER_LOGIN="user_login";
+    //=============
     //消息数量
     public static final String EVENT_MESSAGE_COUNT="message_count";
 
-
     public static final String EVENT_WEBVIEW_NEW_PAGE="open_webview_new_page";
     public static final String EVENT_ATTENTION_RELODAD="attention_reload";
+
+    //发帖选择图片
     public static final String EVENT_SELECT_IMAGE3="select_image3";
     public static final String EVENT_SELECT_IMAGE4="select_image4";
     public static final String EVENT_SELECT_IMAGE5="select_image5";

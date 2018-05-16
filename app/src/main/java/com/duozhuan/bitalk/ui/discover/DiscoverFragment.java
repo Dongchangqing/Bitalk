@@ -66,7 +66,7 @@ public class DiscoverFragment extends BaseFragment {
         }
         mAdapter.addTitles(mTitleList);
         mViewPager.setAdapter(mAdapter);
-        mViewPager.setOffscreenPageLimit(1);
+        mViewPager.setOffscreenPageLimit(5);
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);

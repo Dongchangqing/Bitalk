@@ -3,13 +3,17 @@ package com.duozhuan.bitalk.ui.discover;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.duozhuan.bitalk.LoginActivity;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
+import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
+import com.duozhuan.bitalk.views.browser.WebActivity;
 import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
@@ -18,9 +22,11 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGIN_SUCCESS;
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGOUT_SUCCESS;
+import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_ERROR;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_FINISH;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_START;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PROGRESS_REFRESH;
@@ -34,6 +40,8 @@ public class DiscoverListFragment extends BaseFragment {
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout mRefreshLayout;
 
+    @BindView(R.id.ll_error_page)
+    LinearLayout mLlErrorPage;
     //@BindView(R.id.pb_web)
     //ProgressBar mPbWeb;
 
@@ -62,9 +70,18 @@ public class DiscoverListFragment extends BaseFragment {
         loadingDialog=new LoadingDialog(mContext,"玩命加载中");
         loadingDialog.show();
     }
+    private void showLoadFail() {
+        mWebContent.setVisibility(View.GONE);
+        mLlErrorPage.setVisibility(View.VISIBLE);
+    }
 
     private void showLoadStart() {
         mWebContent.setVisibility(View.VISIBLE);
+        mLlErrorPage.setVisibility(View.GONE);
+    }
+    @OnClick(R.id.ll_error_page)
+    public void onClick(View view) {
+        mWebContent.loadUrl(mUrl);
     }
 
     @Override
@@ -101,6 +118,16 @@ public class DiscoverListFragment extends BaseFragment {
         showLoadStart();
     }
 
+    // webview 加载失败
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_WEBVIEW_PAGE_ERROR)
+    })
+    public void onPageFail(String url) {
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
+        showLoadFail();
+    }
 
     // webview 加载结束
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {

@@ -3,6 +3,7 @@ package com.duozhuan.bitalk.ui.notification;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.duozhuan.bitalk.R;
@@ -19,9 +20,11 @@ import com.hwangjr.rxbus.thread.EventThread;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGIN_SUCCESS;
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGOUT_SUCCESS;
+import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_ERROR;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_FINISH;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_START;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PROGRESS_REFRESH;
@@ -35,7 +38,8 @@ public class NotificationListFragment extends BaseFragment {
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout mRefreshLayout;
 
-
+    @BindView(R.id.ll_error_page)
+    LinearLayout mLlErrorPage;
     String mUrl = "";
     //加载对话框loading
     private LoadingDialog loadingDialog;
@@ -64,9 +68,15 @@ public class NotificationListFragment extends BaseFragment {
         }
 
     }
+    private void showLoadFail() {
+        mWebContent.setVisibility(View.GONE);
+        mLlErrorPage.setVisibility(View.VISIBLE);
+    }
+
 
     private void showLoadStart() {
         mWebContent.setVisibility(View.VISIBLE);
+        mLlErrorPage.setVisibility(View.GONE);
     }
 
     @Override
@@ -79,6 +89,10 @@ public class NotificationListFragment extends BaseFragment {
             mWebContent.destroy();
         }
     }
+    @OnClick(R.id.ll_error_page)
+    public void onClick(View view) {
+        mWebContent.loadUrl(mUrl);
+    }
 
     // webview 开始加载
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
@@ -87,7 +101,16 @@ public class NotificationListFragment extends BaseFragment {
     public void onPageStart(String url) {
         showLoadStart();
     }
-
+    // webview 加载失败
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_WEBVIEW_PAGE_ERROR)
+    })
+    public void onPageFail(String url) {
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
+        showLoadFail();
+    }
 
     // webview 加载结束
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {

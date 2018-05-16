@@ -50,6 +50,7 @@ import static com.duozhuan.bitalk.app.Constants.EVENT_SHOW_BOTTOM_AND_TOP;
 import static com.duozhuan.bitalk.app.Constants.EVENT_SHOW_TOP;
 import static com.duozhuan.bitalk.app.Constants.EVENT_USER_INTRODUCTION;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_NEW_PAGE;
+import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_ERROR;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_FINISH;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_LOADRESOURCE;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_START;
@@ -165,6 +166,14 @@ public class AttentionFragment extends BaseFragment {
     })
     public void onPageStart(String url) {
         showLoadStart();
+    }
+
+    // webview 加载失败
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
+            @Tag(EVENT_WEBVIEW_PAGE_ERROR)
+    })
+    public void onPageFail(String url) {
+        showLoadFail();
     }
 
 

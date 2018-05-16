@@ -165,7 +165,5 @@ public class DefaultRefreshHeader extends FrameLayout implements RefreshHeader {
         rotate.setRepeatCount(-1);
         rotate.setInterpolator(new LinearInterpolator());
         rotate.start();
-//        Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.anim_refresh_loading);
-//        mIvRefreshLoading.startAnimation(animation);
     }
 }
