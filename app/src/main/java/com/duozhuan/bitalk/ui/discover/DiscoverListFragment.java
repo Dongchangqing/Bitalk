@@ -10,6 +10,7 @@ import com.duozhuan.bitalk.LoginActivity;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
+import com.duozhuan.bitalk.util.NetWorkUtils;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
@@ -62,14 +63,19 @@ public class DiscoverListFragment extends BaseFragment {
         DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false,false);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
-            mWebContent.reload();
-            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
-            loadingDialog.show();
+            loadContent();
         });
+        loadContent();
+    }
+
+
+    private void loadContent() {
         mWebContent.loadUrl(mUrl);
-        loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+        loadingDialog = new LoadingDialog(mContext, "玩命加载中");
         loadingDialog.show();
     }
+
+
     private void showLoadFail() {
         mWebContent.setVisibility(View.GONE);
         mLlErrorPage.setVisibility(View.VISIBLE);
@@ -80,8 +86,9 @@ public class DiscoverListFragment extends BaseFragment {
         mLlErrorPage.setVisibility(View.GONE);
     }
     @OnClick(R.id.ll_error_page)
-    public void onClick(View view) {
-        mWebContent.loadUrl(mUrl);
+    public void onClick() {
+        loadContent();
+
     }
 
     @Override
@@ -115,7 +122,10 @@ public class DiscoverListFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_START)
     })
     public void onPageStart(String url) {
-        showLoadStart();
+        if (!NetWorkUtils.isNetworkConnected(mContext))
+            showLoadFail();
+        else
+            showLoadStart();
     }
 
     // webview 加载失败
@@ -126,7 +136,7 @@ public class DiscoverListFragment extends BaseFragment {
         if (loadingDialog!=null){
             loadingDialog.close();
         }
-        showLoadFail();
+        //showLoadFail();
     }
 
     // webview 加载结束
@@ -146,7 +156,7 @@ public class DiscoverListFragment extends BaseFragment {
             @Tag(EVENT_LOGIN_SUCCESS)
     })
     public void loginSuccess(String access_token) {
-        mWebContent.reload();
+        mWebContent.loadUrl(mUrl);
     }
 
 

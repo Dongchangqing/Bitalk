@@ -22,6 +22,7 @@ import com.duozhuan.bitalk.base.base.BaseFragment;
 import com.duozhuan.bitalk.event.JumpUrlEvent;
 import com.duozhuan.bitalk.event.SelectImg6Event;
 import com.duozhuan.bitalk.event.SelectImgEvent;
+import com.duozhuan.bitalk.util.NetWorkUtils;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.CookieUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
@@ -100,11 +101,7 @@ public class AttentionFragment extends BaseFragment {
         DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false,false);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
-            mWebContent.loadUrl(mUrl);
-
-            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
-            loadingDialog.show();
-
+            loadContent();
         });
 
         loadContent();
@@ -113,7 +110,7 @@ public class AttentionFragment extends BaseFragment {
 
     private void loadContent() {
         mWebContent.loadUrl(mUrl);
-        loadingDialog=new LoadingDialog(mContext,"玩命加载中");
+        loadingDialog = new LoadingDialog(mContext, "玩命加载中");
         loadingDialog.show();
     }
 
@@ -165,7 +162,10 @@ public class AttentionFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_START)
     })
     public void onPageStart(String url) {
-        showLoadStart();
+        if (!NetWorkUtils.isNetworkConnected(mContext))
+            showLoadFail();
+        else
+            showLoadStart();
     }
 
     // webview 加载失败
@@ -173,7 +173,11 @@ public class AttentionFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_ERROR)
     })
     public void onPageFail(String url) {
-        showLoadFail();
+        if (loadingDialog!=null){
+            loadingDialog.close();
+        }
+
+        //showLoadFail();
     }
 
 

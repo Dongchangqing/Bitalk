@@ -16,6 +16,7 @@ import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseActivity;
 import com.duozhuan.bitalk.event.SelectImg6Event;
 import com.duozhuan.bitalk.event.SelectImgEvent;
+import com.duozhuan.bitalk.util.NetWorkUtils;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
@@ -88,14 +89,11 @@ public class WebActivity extends BaseActivity {
         DefaultWebViewSetting.init(this, mWebContent, true, false,true);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(this));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
-            mWebContent.reload();
-            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
-            loadingDialog.show();
+            loadContent();
         });
 
         loadContent();
-        loadingDialog=new LoadingDialog(mContext,"玩命加载中");
-        loadingDialog.show();
+
     }
 
     public static void actionWeb(Context context, String url,String title) {
@@ -124,6 +122,8 @@ public class WebActivity extends BaseActivity {
 
     private void loadContent() {
         mWebContent.loadUrl(mUrl);
+        loadingDialog = new LoadingDialog(mContext, "玩命加载中");
+        loadingDialog.show();
     }
 
     private void showLoadFail() {
@@ -143,7 +143,10 @@ public class WebActivity extends BaseActivity {
             @Tag(EVENT_WEBVIEW_PAGE_START)
     })
     public void onPageStart(String url) {
-        showLoadStart();
+        if (!NetWorkUtils.isNetworkConnected(mContext))
+            showLoadFail();
+        else
+            showLoadStart();
     }
 
 
@@ -166,7 +169,7 @@ public class WebActivity extends BaseActivity {
         if (loadingDialog!=null){
             loadingDialog.close();
         }
-        showLoadFail();
+        //showLoadFail();
     }
 
     // webview url 拦截

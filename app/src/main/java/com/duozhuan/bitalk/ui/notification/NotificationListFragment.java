@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
+import com.duozhuan.bitalk.util.NetWorkUtils;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
@@ -57,9 +58,7 @@ public class NotificationListFragment extends BaseFragment {
         DefaultWebViewSetting.init((AppCompatActivity) mContext, mWebContent, true, false,false);
         mRefreshLayout.setRefreshHeader(new DefaultRefreshHeader(getContext()));
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
-            mWebContent.reload();
-            loadingDialog=new LoadingDialog(mContext,"玩命加载中");
-            loadingDialog.show();
+            loadContent();
         });
         mWebContent.loadUrl(mUrl);
         if (SPUtils.isLogin()) {
@@ -68,6 +67,13 @@ public class NotificationListFragment extends BaseFragment {
         }
 
     }
+
+    private void loadContent() {
+        mWebContent.loadUrl(mUrl);
+        loadingDialog = new LoadingDialog(mContext, "玩命加载中");
+        loadingDialog.show();
+    }
+
     private void showLoadFail() {
         mWebContent.setVisibility(View.GONE);
         mLlErrorPage.setVisibility(View.VISIBLE);
@@ -90,8 +96,8 @@ public class NotificationListFragment extends BaseFragment {
         }
     }
     @OnClick(R.id.ll_error_page)
-    public void onClick(View view) {
-        mWebContent.loadUrl(mUrl);
+    public void onClick() {
+        loadContent();
     }
 
     // webview 开始加载
@@ -99,7 +105,10 @@ public class NotificationListFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_PAGE_START)
     })
     public void onPageStart(String url) {
-        showLoadStart();
+        if (!NetWorkUtils.isNetworkConnected(mContext))
+            showLoadFail();
+        else
+            showLoadStart();
     }
     // webview 加载失败
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
@@ -109,7 +118,7 @@ public class NotificationListFragment extends BaseFragment {
         if (loadingDialog!=null){
             loadingDialog.close();
         }
-        showLoadFail();
+        //showLoadFail();
     }
 
     // webview 加载结束
@@ -128,9 +137,7 @@ public class NotificationListFragment extends BaseFragment {
             @Tag(EVENT_LOGIN_SUCCESS)
     })
     public void loginSuccess(String access_token) {
-        //if (getUserVisibleHint()){
-            mWebContent.loadUrl(mUrl);
-        //}
+        mWebContent.loadUrl(mUrl);
     }
 
 
