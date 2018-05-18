@@ -6,7 +6,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -17,8 +16,6 @@ import android.webkit.WebViewClient;
 import com.duozhuan.bitalk.app.Constants;
 import com.hwangjr.rxbus.RxBus;
 
-
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -65,6 +62,7 @@ public class DefaultWebViewClient extends WebViewClient {
         return super.shouldInterceptRequest(view, request);
     }
 
+
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
@@ -105,53 +103,8 @@ public class DefaultWebViewClient extends WebViewClient {
         handler.proceed();
     }
 
-    // 拦截 URL 之后的处理
-    private boolean deelUrlOverride(WebView view, String url) {
-
-        /*if (ServiceUtils.deelForum(mActivity, url)) { // 满足帖子链接，跳转帖子详情页
-            return true;
-        } else if (url.contains(Constant.LICAIJIE_SHARE)) { // 理财节点击跳出原生分享
-            try {
-                // 去掉之后的 &
-                String imageUrl = url.split("&")[1];
-                UmengShareUtils.shareLicaijie(mActivity, imageUrl);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return true;
-        }*/
-        return true;
-    }
 
 
-    /**
-     * 暂时未用
-     * 对图片进行重置大小，宽度就是手机屏幕宽度，高度根据宽度比便自动缩放
-     **/
-    private void imgReset(WebView webView) {
 
-        webView.loadUrl("javascript:(function(){" +
-                "var objs = document.getElementsByTagName('img'); " +
-                "for(var i=0;i<objs.length;i++)  " +
-                "{"
-                + "var img = objs[i];   " +
-                "    img.style.maxWidth = '100%'; img.style.height = 'auto';  " +
-                "}" +
-                "})()");
-    }
 
-    /**
-     * 加载需要的所有JS
-     */
-    private void loadJS(WebView webView) {
-
-        // 图片查看的 JS
-        String jsImagePicture = "javascript:" + "function img_listen(){var Img=document.getElementsByClassName('content')[0].getElementsByTagName('img');for(var i=0;i<Img.length;i++){Img[i].onclick=function(i){var c=i;return function(){var imgarr=new Array;var data=new Array;for(var j=0;j<Img.length;j++){if(Img[j].src.indexOf(\"http\")>=0){imgarr[j]=Img[j].src}else if(Img[j].src.indexOf(\".com\")>=0){imgarr[j]=\"http:\"+Img[j].src}else{imgarr[j]=Img[j].src}}data[0]=c;data[1]=imgarr.length;var imgarrstr=JSON.stringify(imgarr);data[2]=imgarrstr;var json=JSON.stringify(data);console.log(json);window.NativeAPI.openImage(json);return false}}(i)}}img_listen();";
-        webView.loadUrl(jsImagePicture);
-
-        // 获取标题
-        String jsGetTitle = "javascript:" +"function getTitle(){var field = document.getElementsByName('content-title')[0];  return field.content;};window.NativeAPI.setTitle(getTitle());";
-        webView.loadUrl(jsGetTitle);
-
-    }
 }
