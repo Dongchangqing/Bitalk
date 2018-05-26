@@ -83,14 +83,16 @@ public class DiscoverListFragment extends BaseFragment {
                         mWebContent.post(new Runnable() {
                             @Override
                             public void run() {
-                                String url = mWebContent.getUrl();
-                                Log.i("uuu", url);
-                                if (!mUrl.equals(url)) {
-                                    if (!lastUrl.equals(url)) {
-                                        lastUrl = url;
-                                        backPreviousPage();
-                                        if (!url.contains("steemconnect.com/oauth2/authorize")&&!url.contains("signup.steemit.com"))
-                                            WebActivity.actionWeb(mContext, url, "");
+                                if (mWebContent!=null) {
+                                    String url = mWebContent.getUrl();
+                                    Log.i("uuu", url);
+                                    if (!mUrl.equals(url)) {
+                                        if (!lastUrl.equals(url)) {
+                                            lastUrl = url;
+                                            backPreviousPage();
+                                            if (!url.contains("steemconnect.com/oauth2/authorize") && !url.contains("signup.steemit.com"))
+                                                WebActivity.actionWeb(mContext, url, "");
+                                        }
                                     }
                                 }
                             }
