@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duozhuan.bitalk.LoginActivity;
 import com.duozhuan.bitalk.R;
@@ -24,6 +26,7 @@ import com.duozhuan.bitalk.event.SelectImg6Event;
 import com.duozhuan.bitalk.event.SelectImgEvent;
 import com.duozhuan.bitalk.util.NetWorkUtils;
 import com.duozhuan.bitalk.util.SPUtils;
+import com.duozhuan.bitalk.util.ToastUtil;
 import com.duozhuan.bitalk.views.browser.CookieUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
@@ -34,6 +37,9 @@ import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -88,7 +94,9 @@ public class AttentionFragment extends BaseFragment {
 
     //加载对话框loading
     private LoadingDialog loadingDialog;
-
+    private Timer mTimer;
+    private String lastUrl="";
+    private boolean isLogin=false;
     @Override
     protected int getLayout() {
         return R.layout.fragment_attention;
@@ -103,9 +111,45 @@ public class AttentionFragment extends BaseFragment {
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             loadContent();
         });
-
+        mTimer=new Timer();
+        startTimer();
         loadContent();
 
+    }
+    public void startTimer(){
+        if (mTimer!=null) {
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mWebContent!=null) {
+                        mWebContent.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String url = mWebContent.getUrl();
+                                Log.i("uuu", url);
+                                if (!mUrl.equals(url)&&!isLogin) {
+                                    if (!lastUrl.equals(url)) {
+                                        lastUrl = url;
+                                        backPreviousPage();
+                                        WebActivity.actionWeb(mContext, url, "");
+
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+
+                }
+            }, 500, 500);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lastUrl="";
+        isLogin=false;
     }
 
     private void loadContent() {
@@ -223,10 +267,11 @@ public class AttentionFragment extends BaseFragment {
             @Tag(EVENT_WEBVIEW_NEW_PAGE)
     })
     public void openNewPage(String url) {
+        isLogin = true;
         backPreviousPage();
-        //WebActivity.actionWeb(mContext,url);
-        LoginActivity.actionActivity(mContext);
+        WebActivity.actionWeb(mContext, url, "");
     }
+
     //跳转用户简介
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {
             @Tag(EVENT_USER_INTRODUCTION)
@@ -299,7 +344,7 @@ public class AttentionFragment extends BaseFragment {
                     }
                 }
             }
-        },1500);
+        },500);
     }
     // webview url 拦截
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = {

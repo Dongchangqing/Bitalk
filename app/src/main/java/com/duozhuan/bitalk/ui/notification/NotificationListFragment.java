@@ -1,6 +1,8 @@
 package com.duozhuan.bitalk.ui.notification;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -13,12 +15,16 @@ import com.duozhuan.bitalk.util.NetWorkUtils;
 import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
+import com.duozhuan.bitalk.views.browser.WebActivity;
 import com.duozhuan.bitalk.widget.LoadingDialog;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -44,7 +50,8 @@ public class NotificationListFragment extends BaseFragment {
     String mUrl = "";
     //加载对话框loading
     private LoadingDialog loadingDialog;
-
+    private Timer mTimer;
+    private String lastUrl="";
     @Override
     protected int getLayout() {
         return R.layout.fragment_notificationlist;
@@ -60,12 +67,62 @@ public class NotificationListFragment extends BaseFragment {
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             loadContent();
         });
+        mTimer=new Timer();
+        startTimer();
         mWebContent.loadUrl(mUrl);
         if (SPUtils.isLogin()) {
             loadingDialog = new LoadingDialog(mContext, "玩命加载中");
             loadingDialog.show();
         }
 
+    }
+    public void startTimer(){
+        if (mTimer!=null) {
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mWebContent!=null) {
+                        mWebContent.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String url = mWebContent.getUrl();
+                                Log.i("uuu", url);
+                                if (!mUrl.equals(url)) {
+                                    if (!lastUrl.equals(url)) {
+                                        lastUrl = url;
+                                        backPreviousPage();
+                                        WebActivity.actionWeb(mContext, url, "");
+                                    }else{
+                                        backPreviousPage();
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+
+                }
+            }, 500, 500);
+        }
+    }
+    public void backPreviousPage(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mWebContent != null) {
+                    boolean canGoBack = mWebContent.canGoBack();
+                    if (canGoBack) {
+                        mWebContent.goBack();
+                    }
+                }
+            }
+        },500);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lastUrl="";
     }
 
     private void loadContent() {

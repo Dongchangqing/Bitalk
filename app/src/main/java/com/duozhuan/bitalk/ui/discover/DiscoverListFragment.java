@@ -1,17 +1,16 @@
 package com.duozhuan.bitalk.ui.discover;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
-import com.duozhuan.bitalk.LoginActivity;
 import com.duozhuan.bitalk.R;
 import com.duozhuan.bitalk.app.Constants;
 import com.duozhuan.bitalk.base.base.BaseFragment;
 import com.duozhuan.bitalk.util.NetWorkUtils;
-import com.duozhuan.bitalk.util.SPUtils;
 import com.duozhuan.bitalk.views.browser.DefaultRefreshHeader;
 import com.duozhuan.bitalk.views.browser.DefaultWebViewSetting;
 import com.duozhuan.bitalk.views.browser.WebActivity;
@@ -22,11 +21,15 @@ import com.hwangjr.rxbus.annotation.Tag;
 import com.hwangjr.rxbus.thread.EventThread;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGIN_SUCCESS;
 import static com.duozhuan.bitalk.app.Constants.EVENT_LOGOUT_SUCCESS;
+import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_NEW_PAGE;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_ERROR;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_FINISH;
 import static com.duozhuan.bitalk.app.Constants.EVENT_WEBVIEW_PAGE_START;
@@ -50,6 +53,8 @@ public class DiscoverListFragment extends BaseFragment {
 
     //加载对话框loading
     private LoadingDialog loadingDialog;
+    private Timer mTimer;
+    private String lastUrl="";
     @Override
     protected int getLayout() {
         return R.layout.fragment_discoverlist;
@@ -65,9 +70,57 @@ public class DiscoverListFragment extends BaseFragment {
         mRefreshLayout.setOnRefreshListener(refreshlayout -> {
             loadContent();
         });
+        mTimer=new Timer();
+        startTimer();
         loadContent();
     }
+    public void startTimer(){
+        if (mTimer!=null) {
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mWebContent!=null) {
+                        mWebContent.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String url = mWebContent.getUrl();
+                                Log.i("uuu", url);
+                                if (!mUrl.equals(url)) {
+                                    if (!lastUrl.equals(url)) {
+                                        lastUrl = url;
+                                        backPreviousPage();
+                                        if (!url.contains("steemconnect.com/oauth2/authorize")&&!url.contains("signup.steemit.com"))
+                                            WebActivity.actionWeb(mContext, url, "");
+                                    }
+                                }
+                            }
+                        });
+                    }
 
+
+                }
+            }, 500, 500);
+        }
+    }
+    public void backPreviousPage(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mWebContent != null) {
+                    boolean canGoBack = mWebContent.canGoBack();
+                    if (canGoBack) {
+                        mWebContent.goBack();
+                    }
+                }
+            }
+        },500);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        lastUrl="";
+    }
 
     private void loadContent() {
         mWebContent.loadUrl(mUrl);
